@@ -1,3 +1,124 @@
-# Agent-readable representation of deviation handling SOP
-# Content to be added
+# Agent-readable SOP: Temperature excursion handling (storage or transport)
+# Inline notes highlight (a) ambiguity removed and (b) explicit prohibitions for agents.
+
+sop:
+  id: SOP-PHARMA-DEV-001
+  title: Temperature excursion handling
+  domain: pharma
+  version: "0.1"
+  effective_date: "YYYY-MM-DD"   # Set by document control; avoids implicit "current" meaning.
+  owner_role: QA
+  scope: "Storage and transport temperature excursions for controlled materials and products."
+  related_docs:
+    - deviation_procedure
+    - temperature_monitoring_procedure
+
+roles:
+  - name: Operator
+    type: human
+  - name: Supervisor
+    type: human
+  - name: QA
+    type: human
+  - name: Agent
+    type: system
+
+inputs:
+  - name: temperature_c
+    type: number
+    unit: C                    # Removes ambiguity about temperature units.
+  - name: excursion_minutes
+    type: number
+    unit: min                  # Removes ambiguity about duration units.
+  - name: affected_batch_ids
+    type: list                 # Forces explicit batch/lot identification.
+  - name: location_id
+    type: string               # Forces explicit location/equipment/shipper identity.
+
+constraints:
+  - id: C_STORAGE_RANGE
+    description: "Approved storage or transport temperature range."
+    rule: "temperature_c >= 2 and temperature_c <= 8"
+    # Ambiguity removed: range is explicit and machine-checkable.
+    # If a different material uses different limits, this constraint must be parameterized per material.
+
+decisions:
+  - id: D_EXCURSION_DETECTED
+    when: "temperature_c < 2 or temperature_c > 8"
+    then:
+      - A_APPLY_HOLD
+      - A_NOTIFY_QA
+      - A_RECORD_EXCURSION
+      - E_ESCALATE_QA
+    # Ambiguity removed: "if deviation occurs" becomes an explicit condition.
+    # No alternative branches are allowed unless encoded here.
+
+actions:
+  - id: A_APPLY_HOLD
+    description: "Apply physical and system hold to affected materials."
+    allowed_for: ["Operator", "Agent"]
+    # Ambiguity removed: "segregate" and "apply hold" are treated as a specific permitted action.
+    # Agent is allowed to execute hold because it is a safety-containment step.
+
+  - id: A_NOTIFY_QA
+    description: "Notify QA of temperature excursion."
+    allowed_for: ["Operator", "Agent"]
+    # Ambiguity removed: "as soon as practical" is replaced by a mandatory notification action.
+    # Timing policy (SLA) is intentionally not encoded in v0.1.
+
+  - id: A_RECORD_EXCURSION
+    description: "Create or update excursion record with required details."
+    allowed_for: ["Operator", "Agent"]
+    # Ambiguity removed: "record the following" becomes an explicit action.
+    # The required fields should be treated as mandatory by the record template.
+
+escalations:
+  - id: E_ESCALATE_QA
+    to_role: QA
+    required: true
+    reason: "Out-of-range temperature condition requires QA assessment and disposition."
+    # Explicit prohibition: the agent cannot decide disposition or release.
+    # Any out-of-range condition forces human QA involvement.
+
+approvals:
+  - id: QA_DISPOSITION
+    description: "Disposition decision for affected material."
+    required_for:
+      - release_from_hold
+      - rejection
+      - rework
+      - additional_testing
+    approver_role: QA
+    # Explicit prohibition: Agent and Operator cannot approve disposition outcomes.
+    # Human SOP language like "QA determines disposition" is enforced here as a hard gate.
+
+prohibitions:
+  - id: P_NO_DISPOSITION_BY_AGENT
+    description: "Agent must not decide or approve disposition outcomes."
+    forbidden_for: ["Agent"]
+    forbidden_actions:
+      - release_from_hold
+      - reject_material
+      - authorize_rework
+      - authorize_additional_testing
+    # Explicit prohibition list makes "not allowed" visible without inference.
+
+  - id: P_NO_HOLD_REMOVAL_WITHOUT_QA
+    description: "Hold status must not be removed without QA approval."
+    forbidden_for: ["Agent", "Operator"]
+    forbidden_actions:
+      - remove_hold
+    # Ambiguity removed: "Only QA may authorize removal of hold" becomes an enforceable rule.
+
+records:
+  - name: excursion_record
+    required: true
+    # Should include: detected_time, location_id, affected_batch_ids, temperature_c, excursion_minutes, actions_taken.
+  - name: temperature_monitoring_record
+    required: true
+    # Should reference: data logger export, system record, or file pointer.
+  - name: qa_disposition_record
+    required: true
+    # Must include: disposition outcome, rationale reference, approver identity, approval time.
+
 
