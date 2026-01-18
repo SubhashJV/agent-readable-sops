@@ -1,4 +1,4 @@
-# Agent-readable SOP notation (v0.2)
+# Agent-readable SOP notation (v0.1)
 
 This document describes a lightweight notation for expressing standard operating procedures (SOPs) in explicit, agent-readable form.
 
@@ -134,7 +134,7 @@ escalations:
 records:
   - name: deviation_log
     required: true
-
+```
 
 Guidance for writing agent-readable SOPs
 
