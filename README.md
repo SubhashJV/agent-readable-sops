@@ -56,7 +56,7 @@ This repository includes:
   - agent consumption
 - Commentary highlighting where ambiguity was removed and why
 
-The examples are drawn from regulated manufacturing workflows, but the concepts are broadly applicable to any environment where non-human actors interact with SOP-governed processes.
+The examples include a pharma temperature excursion SOP and a food and beverage CCP temperature monitoring SOP, demonstrating the same structuring approach across different regulated domains.  The concepts are broadly applicable to any environment where non-human actors interact with SOP-governed processes.
 
 ---
 
