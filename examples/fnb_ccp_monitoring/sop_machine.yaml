@@ -1,0 +1,99 @@
+# Agent-readable SOP: CCP temperature monitoring (cold storage)
+# Inline comments indicate ambiguity removed and explicit prohibitions.
+
+sop:
+  id: SOP-FNB-CCP-001
+  title: CCP temperature monitoring – cold storage
+  domain: fnb
+  version: "0.1"
+  effective_date: "YYYY-MM-DD"
+  owner_role: FoodSafetyQA
+  scope: "Cold storage CCP temperature monitoring under HACCP."
+
+roles:
+  - name: Operator
+    type: human
+  - name: Supervisor
+    type: human
+  - name: FoodSafetyQA
+    type: human
+  - name: Agent
+    type: system
+
+inputs:
+  - name: temperature_c
+    type: number
+    unit: C
+  - name: ccp_limit_c
+    type: number
+    unit: C
+  - name: deviation_minutes
+    type: number
+    unit: min
+  - name: affected_product_ids
+    type: list
+  - name: storage_unit_id
+    type: string
+
+constraints:
+  - id: C_CCP_LIMIT
+    description: "Cold storage CCP temperature limit."
+    rule: "temperature_c <= ccp_limit_c"
+    # Ambiguity removed: CCP limit is explicit and parameterized.
+
+decisions:
+  - id: D_CCP_DEVIATION
+    when: "temperature_c > ccp_limit_c"
+    then:
+      - A_APPLY_HOLD
+      - A_NOTIFY_QA
+      - A_RECORD_CCP_DEVIATION
+      - E_ESCALATE_FOODSAFETY
+
+actions:
+  - id: A_APPLY_HOLD
+    description: "Segregate and place affected products on hold."
+    allowed_for: ["Operator", "Agent"]
+    # Safety containment action only.
+
+  - id: A_NOTIFY_QA
+    description: "Notify Food Safety/QA of CCP deviation."
+    allowed_for: ["Operator", "Agent"]
+    # Replaces vague timing such as 'inform if not resolved'.
+
+  - id: A_RECORD_CCP_DEVIATION
+    description: "Record CCP deviation and corrective actions."
+    allowed_for: ["Operator", "Agent"]
+
+escalations:
+  - id: E_ESCALATE_FOODSAFETY
+    to_role: FoodSafetyQA
+    required: true
+    reason: "CCP deviation requires food safety assessment and disposition."
+
+approvals:
+  - id: QA_DISPOSITION
+    description: "Disposition decision for affected food product."
+    required_for:
+      - release_product
+      - rework_product
+      - dispose_product
+    approver_role: FoodSafetyQA
+    # Explicit prohibition: Agent cannot decide food safety disposition.
+
+prohibitions:
+  - id: P_NO_DISPOSITION_BY_AGENT
+    description: "Agent must not decide or approve product disposition."
+    forbidden_for: ["Agent"]
+    forbidden_actions:
+      - release_product
+      - rework_product
+      - dispose_product
+
+records:
+  - name: ccp_monitoring_log
+    required: true
+  - name: deviation_record
+    required: true
+  - name: disposition_record
+    required: true
