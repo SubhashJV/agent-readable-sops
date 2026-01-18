@@ -25,6 +25,10 @@ AI agents do not share these assumptions.
 When SOPs are reused directly by AI systems, ambiguity is not a feature. It becomes an execution risk.
 
 ---
+## The problem in practice
+
+![From human SOPs to agent-readable SOPs](images/sop-human-to-agent.png)
+
 
 ## Human SOPs vs agent-readable SOPs
 
