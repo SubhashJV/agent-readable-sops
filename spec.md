@@ -136,7 +136,7 @@ records:
     required: true
 ```
 
-##Guidance for writing agent-readable SOPs
+## Guidance for writing agent-readable SOPs
 
 Replace vague language with explicit constraints
  - Avoid terms like "as needed", "if appropriate", "promptly", or "ensure" without thresholds.
