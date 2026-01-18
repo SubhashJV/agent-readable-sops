@@ -139,16 +139,16 @@ records:
 Guidance for writing agent-readable SOPs
 
 Replace vague language with explicit constraints
-Avoid terms like "as needed", "if appropriate", "promptly", or "ensure" without thresholds.
+ - Avoid terms like "as needed", "if appropriate", "promptly", or "ensure" without thresholds.
 
 Make stop conditions explicit
-If a situation requires holding, stopping, or escalation, encode it as a rule.
+ - If a situation requires holding, stopping, or escalation, encode it as a rule.
 
 Separate actions from approvals
-Actions may be proposed by an agent, but approvals should be explicit and role-bound.
+ - Actions may be proposed by an agent, but approvals should be explicit and role-bound.
 
 Prefer bounded choices over free-form steps
-Encode allowed actions and forbidden actions rather than assuming intent.
+ - Encode allowed actions and forbidden actions rather than assuming intent.
 
 Preserve human sign-off points
-Identify where human review is required and treat it as a hard gate.
+ - Identify where human review is required and treat it as a hard gate.
