@@ -15,4 +15,6 @@ Output format (exact):
 1) A fenced code block with YAML:
 ```yaml
 ...
+2) A fenced code block with Markdown:
 
+...
