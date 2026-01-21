@@ -1,6 +1,7 @@
 # SOP Translator (v0)
 
 This tool generates an agent-readable SOP draft (YAML) and translation notes from a human-authored SOP (Markdown).
+This tool is intended to be run locally by a human reviewer. It does not run automatically on GitHub and does not generate outputs unless explicitly invoked.
 
 It is intentionally conservative:
 - it does not invent thresholds, units, or authority
@@ -16,5 +17,5 @@ It is intentionally conservative:
 From the repository root:
 
 ```bash
-pip install -r tools/sop_translator/requirements.txt
+
 
